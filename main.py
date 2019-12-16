@@ -15,7 +15,7 @@ from keras.optimizers import Adam
 from rl.agents.dqn import DQNAgent
 from rl.core import Processor
 from rl.memory import SequentialMemory
-from rl.policy import LinearAnnealedPolicy, EpsGreedyQPolicy
+from rl.policy import LinearAnnealedPolicy, EpsGreedyQPolicy, BoltzmannQPolicy
 
 INPUT_SHAPE = (84, 84)
 WINDOW_LENGTH = 4
@@ -79,7 +79,7 @@ print(model.summary())
 
 # Finally, we configure and compile our agent. You can use every built-in Keras optimizer and
 # even the metrics!
-memory = SequentialMemory(limit=1000000, window_length=WINDOW_LENGTH)
+memory = SequentialMemory(limit=5000000, window_length=WINDOW_LENGTH)
 processor = AtariProcessor()
 
 # Select a policy. We use eps-greedy action selection, which means that a random action is selected
@@ -87,8 +87,7 @@ processor = AtariProcessor()
 # the agent initially explores the environment (high eps) and then gradually sticks to what it knows
 # (low eps). We also set a dedicated eps value that is used during testing. Note that we set it to 0.05
 # so that the agent still performs some random actions. This ensures that the agent cannot get stuck.
-policy = LinearAnnealedPolicy(EpsGreedyQPolicy(), attr='eps', value_max=1., value_min=.1, value_test=.05,
-                              nb_steps=5000)
+policy = LinearAnnealedPolicy(EpsGreedyQPolicy(), attr='eps', value_max=1., value_min=.1, value_test=.05, nb_steps=100000)
 
 # The trade-off between exploration and exploitation is difficult and an on-going research topic.
 # If you want, you can experiment with the parameters or use a different policy. Another popular one
@@ -97,8 +96,8 @@ policy = LinearAnnealedPolicy(EpsGreedyQPolicy(), attr='eps', value_max=1., valu
 # Feel free to give it a try!
 
 dqn = DQNAgent(model=model, nb_actions=nb_actions, policy=policy, memory=memory,
-               processor=processor, nb_steps_warmup=20000, gamma=.99, target_model_update=2500,
-               train_interval=4, delta_clip=1.)
+               processor=processor, nb_steps_warmup=50000, gamma=.99, target_model_update=5000,
+               train_interval=20, delta_clip=1.)
 dqn.compile(Adam(lr=.00025), metrics=['mae'])
 
 if args.mode == 'train':
@@ -118,7 +117,7 @@ if args.mode == 'train':
         print('loading weight file...')
         dqn.load_weights(weights_filename)
 
-    dqn.fit(env, callbacks=[tensorboard_callback], nb_steps=20000, log_interval=5000)
+    dqn.fit(env, callbacks=[tensorboard_callback], nb_steps=100000, log_interval=5000)
 
     # After training is done, we save the final weights one more time.
     dqn.save_weights(weights_filename, overwrite=True)
