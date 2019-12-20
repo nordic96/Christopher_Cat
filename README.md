@@ -1,21 +1,21 @@
-# Christopher
-Christopher is a learning agent built upon a keras-rl framework that handles game environments to maximise performance measurement.
+# Christopher_Cat
+Christopher is one of the project; `Christopher` for familiarising with machine learning and other basic Artificial Intelligence concepts.
 
-This repository is purely for educational purpose, in order to familiarise with the most popular machine and deep learning frameworks provided in the industry; Tensorflow, Keras
+This repository highly depends on the tutorial provided by Tensorflow.
 
-- Learning Agent with keras-rl framework.
-- Default epsilon-greedy policy is used.
+It is capable of the followings;
+* Classify image between `cat` and `dog`
+* Training the model continuously by loading previous model weights.
+* Evaluate and predict any type of image that user wants to predict.
+
+This repository is purely for educational purpose.
 
 ## Libraries Used
-1. keras-rl: 0.4.2
-2. tensorflow: 1.14.0
-3. numpy: 1.16.4
-4. PIL (Pillow): 6.2.1
-5. gym: 0.15.4
-6. keras: 2.3.1
+1. Tensorflow: 2.0
+1. Pillow
+1. Scipy
+1. Numpy
 
 ## Reference
-[Tensorflow v2.0 tf_agents tutorial](https://github.com/tensorflow/agents/blob/master/tf_agents/colabs/1_dqn_tutorial.ipynb)
-
-[keras-rl examples in github](https://github.com/keras-rl/keras-rl/blob/master/examples/dqn_atari.py)
+[Tensorflow Tutorial: Image Classification](https://www.tensorflow.org/tutorials/images/classification)
 
