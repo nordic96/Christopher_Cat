@@ -1,19 +1,24 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import tensorflow as tf
+import argparse
+import os
 
+import matplotlib.pyplot as plt
+import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-import os
-import matplotlib.pyplot as plt
 from model.neural_network_model import NeuralNetworkModel
 from trainer.model_trainer import ModelTrainer
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--mode', help='execution mode. train, test')
+args = parser.parse_args()
 
 _URL = 'https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip'
 path_to_zip = tf.keras.utils.get_file('cats_and_dogs.zip', origin=_URL, extract=True)
 PATH = os.path.join(os.path.dirname(path_to_zip), 'cats_and_dogs_filtered')
 batch_size = 128
-EPOCHS = 15
+EPOCHS = 2
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
 
@@ -78,8 +83,9 @@ def generate_generator():
 
 
 if __name__ == '__main__':
-    train_data_gen, val_data_gen, total_train, total_val = generate_generator()
-    neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
-    model_trainer = ModelTrainer(train_data_gen, total_train, EPOCHS,
-                                 val_data_gen, total_val, neural_network.model)
-    model_trainer.train_model()
+    if args.mode == 'train':
+        train_data_gen, val_data_gen, total_train, total_val = generate_generator()
+        neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
+        model_trainer = ModelTrainer(train_data_gen, total_train, EPOCHS,
+                                     val_data_gen, total_val, neural_network.model)
+        history = model_trainer.train_model()
