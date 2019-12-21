@@ -63,7 +63,12 @@ def load_val_train_data():
 
 
 def generate_generator():
-    train_image_generator = ImageDataGenerator(rescale=1. / 255)
+    train_image_generator = ImageDataGenerator(rescale=1. / 255,
+                                               rotation_range=45,
+                                               width_shift_range=.15,
+                                               height_shift_range=.15,
+                                               horizontal_flip=True,
+                                               zoom_range=0.5)
     validation_image_generator = ImageDataGenerator(rescale=1. / 255)
     train_dir, validation_dir, total_train, total_val = load_val_train_data()
 
