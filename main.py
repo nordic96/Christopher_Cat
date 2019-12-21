@@ -4,7 +4,9 @@ import argparse
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 import tensorflow as tf
+from tensorflow.keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from model.neural_network_model import NeuralNetworkModel
@@ -18,7 +20,7 @@ _URL = 'https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip
 path_to_zip = tf.keras.utils.get_file('cats_and_dogs.zip', origin=_URL, extract=True)
 PATH = os.path.join(os.path.dirname(path_to_zip), 'cats_and_dogs_filtered')
 batch_size = 128
-EPOCHS = 2
+EPOCHS = 10
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
 
@@ -87,6 +89,15 @@ def generate_generator():
     return train_gen, val_gen, total_train, total_val
 
 
+def load(img_predict_filename):
+    test_image = image.load_img(img_predict_filename, target_size=(IMG_WIDTH, IMG_HEIGHT))
+    test_image = image.img_to_array(test_image)
+    test_image = np.expand_dims(test_image, axis=0)
+
+    test_image = test_image.reshape(IMG_WIDTH, IMG_HEIGHT * 3)
+    return test_image
+
+
 if __name__ == '__main__':
     if args.mode == 'train':
         train_data_gen, val_data_gen, total_train, total_val = generate_generator()
@@ -94,3 +105,10 @@ if __name__ == '__main__':
         model_trainer = ModelTrainer(train_data_gen, total_train, EPOCHS,
                                      val_data_gen, total_val, neural_network.model)
         history = model_trainer.train_model()
+
+    if args.mode == 'predict':
+        neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
+        neural_network.model.load_weights('christopher_model.h5')
+        img_to_predict = load('data/dog.jpg')
+        result = neural_network.model.predict(img_to_predict, batch_size=1)
+        print(result)
