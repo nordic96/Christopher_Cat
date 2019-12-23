@@ -1,6 +1,6 @@
 # Christopher_Cat
 ### Introduction
-Christopher is one of the project; `Christopher` for familiarising with machine learning and other basic Artificial Intelligence concepts.
+Christopher_Cat is one of the project; `Christopher` for familiarising with machine learning and other basic Artificial Intelligence concepts.
 
 This repository highly depends on the tutorial provided by Tensorflow.
 

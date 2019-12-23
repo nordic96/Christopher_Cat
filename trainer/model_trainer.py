@@ -31,7 +31,8 @@ class ModelTrainer:
 
     def train_model(self):
         cp_callback = tf.keras.callbacks.ModelCheckpoint(CHECKPOINT_PATH,
-                                                         save_weights_only=True,
+                                                         save_best_only=True,
+                                                         monitor='val_loss',
                                                          verbose=1)
         if len(glob.glob(CHECKPOINT_DIR)) > 1:
             latest = tf.train.latest_checkpoint(CHECKPOINT_DIR)

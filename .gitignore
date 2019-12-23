@@ -1,2 +1,4 @@
 venv/
 .idea/
+christopher_model.h5
+data/

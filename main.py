@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import argparse
+import glob
 import os
 
 import matplotlib.pyplot as plt
@@ -23,6 +24,7 @@ batch_size = 128
 EPOCHS = 10
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
+MODEL_FILENAME = 'christopher_model.h5'
 
 
 def plot_images(images_arr):
@@ -89,26 +91,42 @@ def generate_generator():
     return train_gen, val_gen, total_train, total_val
 
 
-def load(img_predict_filename):
-    test_image = image.load_img(img_predict_filename, target_size=(IMG_WIDTH, IMG_HEIGHT))
-    test_image = image.img_to_array(test_image)
-    test_image = np.expand_dims(test_image, axis=0)
+def load(filename):
+    img = image.load_img(filename, target_size=(IMG_WIDTH, IMG_HEIGHT))
+    img = image.img_to_array(img)
+    img = np.expand_dims(img, axis=0)
+    return img
 
-    test_image = test_image.reshape(IMG_WIDTH, IMG_HEIGHT * 3)
-    return test_image
+
+def train():
+    train_data_gen, val_data_gen, total_train, total_val = generate_generator()
+    neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
+    model_trainer = ModelTrainer(train_data_gen, total_train, EPOCHS,
+                                 val_data_gen, total_val, neural_network.model)
+    history = model_trainer.train_model()
 
 
 if __name__ == '__main__':
     if args.mode == 'train':
-        train_data_gen, val_data_gen, total_train, total_val = generate_generator()
-        neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
-        model_trainer = ModelTrainer(train_data_gen, total_train, EPOCHS,
-                                     val_data_gen, total_val, neural_network.model)
-        history = model_trainer.train_model()
+        train()
+
+    if args.mode == 'eval':
+        if len(glob.glob(MODEL_FILENAME)) == 0:
+            print('no pre-trained model found. continuing with training...')
+            train()
+        model = tf.keras.models.load_model(MODEL_FILENAME)
+        model.summary()
 
     if args.mode == 'predict':
-        neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
-        neural_network.model.load_weights('christopher_model.h5')
-        img_to_predict = load('data/dog.jpg')
-        result = neural_network.model.predict(img_to_predict, batch_size=1)
+        if len(glob.glob(MODEL_FILENAME)) == 0:
+            print('no pre-trained model found. continuing with training...')
+            train()
+        model = tf.keras.models.load_model(MODEL_FILENAME)
+        model.summary()
+        predict_image_generator = ImageDataGenerator(rescale=1. / 255)
+        predict_gen = predict_image_generator.flow_from_directory(batch_size=batch_size,
+                                                                  directory='data/',
+                                                                  target_size=(IMG_HEIGHT, IMG_WIDTH),
+                                                                  class_mode='binary')
+        result = model.predict_generator(predict_gen)
         print(result)
