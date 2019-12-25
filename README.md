@@ -15,8 +15,15 @@ This repository is purely for educational purpose.
 Data statistics visualization using `Tensorboard`
 
 ### Model Structure
+Model is based on deep neural network with 2 hidden layers with Conv2D Rectified Linear Unit (ReLU),
+with additional dropouts of 0.2 and maxpooling layers. Structure is referenced from official Tensorflow tutorial.
+
 ![Model Structure Graph](/docs/img/model_graph.png?raw=true)
 
+### Results
+Current Training results show that it has an accuracy of 0.74 with value accuracy of 0.768
+
+![Accuracy and Loss graph](/docs/img/accuracy_loss_screenshot.png?raw=true)
 
 ### Libraries Used
 1. Tensorflow: 2.0
