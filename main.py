@@ -96,7 +96,8 @@ def load(filename):
     img = np.expand_dims(img, axis=0)
     return img
 
-
+# Total number of steps per epoch = total images (2000) = steps * batch size (100 * 20)
+# Total number of validation steps = total images (1000) steps * batch size (50 * 20)
 if __name__ == '__main__':
     if args.mode == 'train':
         neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
