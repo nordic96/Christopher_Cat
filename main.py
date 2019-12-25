@@ -10,7 +10,7 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from model.neural_network_model import NeuralNetworkModel
-from trainer.model_trainer import ModelTrainer
+from trainer.model_trainer import ModelTrainer, visualise_history
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--mode', help='execution mode. train, test')
@@ -19,7 +19,7 @@ args = parser.parse_args()
 _URL = 'https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip'
 path_to_zip = tf.keras.utils.get_file('cats_and_dogs.zip', origin=_URL, extract=True)
 PATH = os.path.join(os.path.dirname(path_to_zip), 'cats_and_dogs_filtered')
-batch_size = 128
+BATCH_SIZE = 20
 EPOCHS = 10
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
@@ -61,7 +61,7 @@ def load_val_train_data():
     print("--")
     print("Total training images:", total_train)
     print("Total validation images:", total_val)
-    return train_dir, validation_dir, total_train, total_val
+    return train_dir, validation_dir
 
 
 def generate_generator():
@@ -72,43 +72,46 @@ def generate_generator():
                                                horizontal_flip=True,
                                                zoom_range=0.5)
     validation_image_generator = ImageDataGenerator(rescale=1. / 255)
-    train_dir, validation_dir, total_train, total_val = load_val_train_data()
+    train_dir, validation_dir = load_val_train_data()
 
-    train_gen = train_image_generator.flow_from_directory(batch_size=batch_size,
+    train_gen = train_image_generator.flow_from_directory(batch_size=BATCH_SIZE,
                                                           directory=train_dir,
                                                           shuffle=True,
                                                           target_size=(IMG_HEIGHT, IMG_WIDTH),
                                                           class_mode='binary')
 
-    val_gen = validation_image_generator.flow_from_directory(batch_size=batch_size,
+    val_gen = validation_image_generator.flow_from_directory(batch_size=BATCH_SIZE,
                                                              directory=validation_dir,
                                                              shuffle=True,
                                                              target_size=(IMG_HEIGHT, IMG_WIDTH),
                                                              class_mode='binary')
 
-    return train_gen, val_gen, total_train, total_val
+    return train_gen, val_gen
 
 
-def load(img_predict_filename):
-    test_image = image.load_img(img_predict_filename, target_size=(IMG_WIDTH, IMG_HEIGHT))
-    test_image = image.img_to_array(test_image)
-    test_image = np.expand_dims(test_image, axis=0)
-
-    test_image = test_image.reshape(IMG_WIDTH, IMG_HEIGHT * 3)
-    return test_image
+def load(filename):
+    img = image.load_img(filename, target_size=(IMG_WIDTH, IMG_HEIGHT))
+    img = image.img_to_array(img)
+    img = np.expand_dims(img, axis=0)
+    return img
 
 
 if __name__ == '__main__':
     if args.mode == 'train':
-        train_data_gen, val_data_gen, total_train, total_val = generate_generator()
         neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
-        model_trainer = ModelTrainer(train_data_gen, total_train, EPOCHS,
-                                     val_data_gen, total_val, neural_network.model)
+        train_data_gen, val_data_gen = generate_generator()
+        model_trainer = ModelTrainer(train_data_gen=train_data_gen,
+                                     steps_per_epoch=100,
+                                     epochs=EPOCHS,
+                                     validation_gen=val_data_gen,
+                                     validation_steps=50,
+                                     model=neural_network.model)
         history = model_trainer.train_model()
+        visualise_history(history)
 
     if args.mode == 'predict':
-        neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
-        neural_network.model.load_weights('christopher_model.h5')
+        loaded_model = tf.keras.models.load_model('christopher_model.hdf5')
+        loaded_model.summary()
         img_to_predict = load('data/dog.jpg')
-        result = neural_network.model.predict(img_to_predict, batch_size=1)
+        result = loaded_model.predict(img_to_predict, batch_size=1)
         print(result)

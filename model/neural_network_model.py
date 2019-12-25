@@ -28,7 +28,7 @@ def create_model(img_height, img_width, channel_size):
     model.compile(optimizer='adam',
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
-    print(model.summary())
+    model.summary()
     return model
 
 
