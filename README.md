@@ -20,8 +20,15 @@ with additional dropouts of 0.2 and maxpooling layers. Structure is referenced f
 
 ![Model Structure Graph](/docs/img/model_graph.png?raw=true)
 
-### Results
+### Training & Results
+Training took 10 minutes using GTX1060Ti hardware.
+3 continuous traininig which includes 10 epochs per training.
+
 Current Training results show that it has an accuracy of 0.74 with value accuracy of 0.768
+![Prediction Sample](/docs/img/test_results.png)
+
+Above screenshot is the actual prediction made by our trained model. As the model is only trained with 2000 images of dogs and cats,
+with an average accuracy of 74%, the results show some incorrect predictions. Additional training would be able to increase the model's accuracy.
 
 ![Accuracy and Loss graph](/docs/img/accuracy_loss_screenshot.png?raw=true)
 
