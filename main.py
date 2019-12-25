@@ -24,6 +24,7 @@ EPOCHS = 10
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
 MODEL_FILENAME = 'christopher_model.h5'
+PREDICTION_DIR = 'prediction/'
 
 
 def plot_images(images_arr):
@@ -90,11 +91,23 @@ def generate_generator():
     return train_gen, val_gen
 
 
-def load(filename):
-    img = image.load_img(filename, target_size=(IMG_WIDTH, IMG_HEIGHT))
-    img = image.img_to_array(img)
-    img = np.expand_dims(img, axis=0)
-    return img
+def load():
+    total_num_images = len(os.listdir(PREDICTION_DIR))
+    batch_holder = np.zeros((total_num_images, IMG_WIDTH, IMG_HEIGHT, 3))
+    for i, img in enumerate(os.listdir(PREDICTION_DIR)):
+        img = image.load_img(os.path.join(PREDICTION_DIR, img),
+                             target_size=(IMG_WIDTH, IMG_HEIGHT))
+        img = image.img_to_array(img)
+        img = np.expand_dims(img, axis=0)
+        batch_holder[i, :] = img
+    return batch_holder
+
+
+def get_label_name(index):
+    if index == 0:
+        return 'cat'
+    elif index == 1:
+        return 'dog'
 
 
 # Total number of steps per epoch = total images (2000) = steps * batch size (100 * 20)
@@ -115,6 +128,12 @@ if __name__ == '__main__':
     if args.mode == 'predict':
         loaded_model = tf.keras.models.load_model('christopher_model.hdf5')
         loaded_model.summary()
-        img_to_predict = load('data/dog.jpg')
-        result = loaded_model.predict(img_to_predict, batch_size=1)
-        print(result)
+        batch_holder = load()
+        result = loaded_model.predict_classes(batch_holder)
+
+        fig = plt.figure(figsize=(20, 20))
+        for i,img in enumerate(batch_holder):
+            fig.add_subplot(4, 5, i+1)
+            plt.title(get_label_name(result[i][0]))
+            plt.imshow(img/256.)
+        plt.show()

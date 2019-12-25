@@ -7,7 +7,7 @@ from tensorflow.keras.callbacks import TensorBoard
 
 # number of epochs: how many times do you want
 # to pass the same batch size to train
-# total batch size = total train data size
+# total batch size = total train prediction size
 CHECKPOINT_PATH = 'training/model_{accuracy}.hdf5'
 CHECKPOINT_DIR = os.path.dirname(CHECKPOINT_PATH)
 MODEL_WEIGHT_FILENAME = 'christopher_model.hdf5'
@@ -17,7 +17,7 @@ def visualise_history(history):
     acc = history.history['accuracy']
     val_acc = history.history['val_accuracy']
 
-    # Retrieve a list of list results on training and validation data
+    # Retrieve a list of list results on training and validation prediction
     # sets for each training epoch
     loss = history.history['loss']
     val_loss = history.history['val_loss']
