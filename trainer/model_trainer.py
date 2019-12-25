@@ -1,8 +1,8 @@
-import os
-import tensorflow as tf
-import glob
-import matplotlib.pyplot as plt
 import datetime
+import os
+
+import matplotlib.pyplot as plt
+import tensorflow as tf
 from tensorflow.keras.callbacks import TensorBoard
 
 # number of epochs: how many times do you want

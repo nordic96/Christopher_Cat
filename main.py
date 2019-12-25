@@ -23,6 +23,7 @@ BATCH_SIZE = 20
 EPOCHS = 10
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
+MODEL_FILENAME = 'christopher_model.h5'
 
 
 def plot_images(images_arr):
