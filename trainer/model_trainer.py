@@ -80,7 +80,7 @@ class ModelTrainer:
             epochs=self.epochs,
             validation_data=self.validation_gen,
             validation_steps=self.validation_steps,
-            callbacks=[tb_callback]
+            callbacks=[tb_callback],
         )
         self.model.save(MODEL_WEIGHT_FILENAME)
         print('model weights saved!')

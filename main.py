@@ -19,11 +19,12 @@ args = parser.parse_args()
 _URL = 'https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip'
 path_to_zip = tf.keras.utils.get_file('cats_and_dogs.zip', origin=_URL, extract=True)
 PATH = os.path.join(os.path.dirname(path_to_zip), 'cats_and_dogs_filtered')
+NEW_PATH = 'training_data'
 BATCH_SIZE = 20
 EPOCHS = 10
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
-MODEL_FILENAME = 'christopher_model.h5'
+MODEL_FILENAME = 'christopher_model.hdf5'
 PREDICTION_DIR = 'prediction/'
 
 
@@ -66,6 +67,20 @@ def load_val_train_data():
     return train_dir, validation_dir
 
 
+def load_new_train_data():
+    train_dir = os.path.join(NEW_PATH, 'train')
+    val_dir = os.path.join(NEW_PATH, 'val')
+    if not os.path.isdir(train_dir):
+        os.mkdir(train_dir)
+        os.mkdir(os.path.join(train_dir, 'cat'))
+        os.mkdir(os.path.join(train_dir, 'dog'))
+    if not os.path.isdir(val_dir):
+        os.mkdir(val_dir)
+        os.mkdir(os.path.join(val_dir, 'cat'))
+        os.mkdir(os.path.join(val_dir, 'dog'))
+    return train_dir, val_dir
+
+
 def generate_generator():
     train_image_generator = ImageDataGenerator(rescale=1. / 255,
                                                rotation_range=45,
@@ -74,7 +89,7 @@ def generate_generator():
                                                horizontal_flip=True,
                                                zoom_range=0.5)
     validation_image_generator = ImageDataGenerator(rescale=1. / 255)
-    train_dir, validation_dir = load_val_train_data()
+    train_dir, validation_dir = load_new_train_data()
 
     train_gen = train_image_generator.flow_from_directory(batch_size=BATCH_SIZE,
                                                           directory=train_dir,
@@ -110,23 +125,27 @@ def get_label_name(index):
         return 'dog'
 
 
-# Total number of steps per epoch = total images (2000) = steps * batch size (100 * 20)
-# Total number of validation steps = total images (1000) steps * batch size (50 * 20)
+# i.e. Total number of steps per epoch = total images (2000) = steps * batch size (100 * 20)
+# i.e. Total number of validation steps = total images (1000) steps * batch size (50 * 20)
 if __name__ == '__main__':
     if args.mode == 'train':
         neural_network = NeuralNetworkModel(IMG_HEIGHT, IMG_WIDTH, channel_size=3)
         train_data_gen, val_data_gen = generate_generator()
         model_trainer = ModelTrainer(train_data_gen=train_data_gen,
-                                     steps_per_epoch=100,
+                                     steps_per_epoch=875,
                                      epochs=EPOCHS,
                                      validation_gen=val_data_gen,
-                                     validation_steps=50,
+                                     validation_steps=185,
                                      model=neural_network.model)
+        if os.path.isfile(MODEL_FILENAME):
+            print('loading pre-trained model...')
+            neural_network.model = tf.keras.models.load_model(MODEL_FILENAME)
+
         history = model_trainer.train_model()
         visualise_history(history)
 
     if args.mode == 'predict':
-        loaded_model = tf.keras.models.load_model('christopher_model.hdf5')
+        loaded_model = tf.keras.models.load_model(MODEL_FILENAME)
         loaded_model.summary()
         batch_holder = load()
         result = loaded_model.predict_classes(batch_holder)
