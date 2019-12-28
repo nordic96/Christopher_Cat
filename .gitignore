@@ -1,5 +1,8 @@
 venv/
 .idea/
+build/
+dist/
+christopher_image_classifier.egg-info/
 prediction/
 christopher_model.hdf5
 training_data/
