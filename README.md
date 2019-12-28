@@ -1,4 +1,4 @@
-# Christopher_Cat
+# Christopher_Image_Classifier
 ### Introduction
 Christopher_Cat is one of the project; `Christopher` for familiarising with machine learning and other basic Artificial Intelligence concepts.
 
@@ -32,7 +32,10 @@ with an average accuracy of 74%, the results show some incorrect predictions. Ad
 
 ![Accuracy and Loss graph](/docs/img/accuracy_loss_screenshot.png?raw=true)
 
-### Libraries Used
+### Libraries Used & Setup
+for virtual environment activated, execute the pip command `pip install -r requirements.txt`
+> **SetupTools Issue**: Upgrade setuptools to 42.0.2 `pip install --ignore-installed --user setuptools`
+
 1. Tensorflow: 2.0
 1. Pillow: 6.2.1
 1. Scipy: 1.4.0
