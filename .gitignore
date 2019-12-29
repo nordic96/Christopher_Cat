@@ -6,4 +6,6 @@ christopher_image_classifier.egg-info/
 prediction/
 logs/*
 christopher_model.hdf5
+PetImages/
 training_data/
+

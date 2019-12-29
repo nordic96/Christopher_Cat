@@ -26,8 +26,8 @@ args = parser.parse_args()
 _URL = 'https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip'
 path_to_zip = tf.keras.utils.get_file('cats_and_dogs.zip', origin=_URL, extract=True)
 PATH = os.path.join(os.path.dirname(path_to_zip), 'cats_and_dogs_filtered')
-NEW_PATH = 'training_data'
-BATCH_SIZE = 20
+NEW_PATH = 'PetImages'
+BATCH_SIZE = 40
 EPOCHS = args.epochs
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
@@ -48,8 +48,8 @@ def plot_images(images_arr):
 
 
 def load_val_train_data():
-    train_dir = os.path.join(PATH, 'train')
-    validation_dir = os.path.join(PATH, 'validation')
+    train_dir = os.path.join(NEW_PATH, 'train')
+    validation_dir = os.path.join(NEW_PATH, 'validation')
 
     train_cats_dir = os.path.join(train_dir, 'cats')  # directory with our training cat pictures
     train_dogs_dir = os.path.join(train_dir, 'dogs')  # directory with our training dog pictures
@@ -82,7 +82,7 @@ def generate_generator():
                                                width_shift_range=.15,
                                                height_shift_range=.15,
                                                horizontal_flip=True,
-                                               zoom_range=0.25)
+                                               zoom_range=0.40)
     validation_image_generator = ImageDataGenerator(rescale=1. / 255)
     train_dir, validation_dir = load_val_train_data()
 
@@ -129,10 +129,10 @@ if __name__ == '__main__':
                                             num_class=len(CATEGORIES))
         train_data_gen, val_data_gen = generate_generator()
         model_trainer = ModelTrainer(train_data_gen=train_data_gen,
-                                     steps_per_epoch=100,
+                                     steps_per_epoch=500,
                                      epochs=EPOCHS,
                                      validation_gen=val_data_gen,
-                                     validation_steps=50,
+                                     validation_steps=125,
                                      model=neural_network.model)
         if os.path.isfile(MODEL_FILENAME):
             print('loading pre-trained model...')
