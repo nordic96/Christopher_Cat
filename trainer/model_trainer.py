@@ -4,6 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras.callbacks import TensorBoard
+from sys import platform
 
 # number of epochs: how many times do you want
 # to pass the same batch size to train
@@ -64,8 +65,15 @@ class ModelTrainer:
                                                          save_best_only=True)
         if not (os.path.isdir('./logs')):
             os.mkdir('./logs')
-        tb_callback = TensorBoard(log_dir="logs\\fit\\"
-                                          + datetime.datetime.now().strftime("%Y%m%d-%H%M%S"),
+
+        # Checking OS for TensorBoard compatibility
+        if platform == "darwin":
+            print('os: OSX detected..')
+            tb_log = 'logs/'
+        elif platform == 'win32':
+            print('os: Windows detected..')
+            tb_log = "logs\\fit\\" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        tb_callback = TensorBoard(log_dir=tb_log,
                                   histogram_freq=2,
                                   write_graph=True,
                                   write_images=False)
