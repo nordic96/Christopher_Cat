@@ -44,10 +44,6 @@ Accuracy: 77.6%
 
 loss: 0.4897
 
-![](docs/img/v0.0.2train_val_acc_29_12_2019.png)
-
-![](docs/img/v0.0.2train_val_loss_29_12_2019.png)
-
 ### Libraries Used & Setup
 for virtual environment activated, execute the pip command `pip install -r requirements.txt`
 > **SetupTools Issue**: Upgrade setuptools to 42.0.2 `pip install --ignore-installed --user setuptools`
