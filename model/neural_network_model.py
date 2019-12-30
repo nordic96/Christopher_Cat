@@ -25,7 +25,7 @@ def create_model(img_height, img_width, channel_size, num_class):
     model.add(Flatten())
     model.add(Dense(512, activation='relu'))
     model.add(Dense(num_class, activation='softmax'))
-    model.compile(optimizer='rmsprop',
+    model.compile(optimizer='adam',
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     model.summary()

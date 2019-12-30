@@ -27,7 +27,7 @@ _URL = 'https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip
 path_to_zip = tf.keras.utils.get_file('cats_and_dogs.zip', origin=_URL, extract=True)
 PATH = os.path.join(os.path.dirname(path_to_zip), 'cats_and_dogs_filtered')
 NEW_PATH = 'PetImages'
-BATCH_SIZE = 40
+BATCH_SIZE = 20
 EPOCHS = args.epochs
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
@@ -78,11 +78,11 @@ def load_val_train_data():
 
 def generate_generator():
     train_image_generator = ImageDataGenerator(rescale=1. / 255,
-                                               rotation_range=50,
+                                               rotation_range=40,
                                                width_shift_range=.15,
                                                height_shift_range=.15,
                                                horizontal_flip=True,
-                                               zoom_range=0.40)
+                                               zoom_range=0.50)
     validation_image_generator = ImageDataGenerator(rescale=1. / 255)
     train_dir, validation_dir = load_val_train_data()
 
@@ -129,10 +129,10 @@ if __name__ == '__main__':
                                             num_class=len(CATEGORIES))
         train_data_gen, val_data_gen = generate_generator()
         model_trainer = ModelTrainer(train_data_gen=train_data_gen,
-                                     steps_per_epoch=500,
+                                     steps_per_epoch=1000,
                                      epochs=EPOCHS,
                                      validation_gen=val_data_gen,
-                                     validation_steps=125,
+                                     validation_steps=250,
                                      model=neural_network.model)
         if os.path.isfile(MODEL_FILENAME):
             print('loading pre-trained model...')

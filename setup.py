@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="christopher-image-classifier", # Replace with your own username
-    version="0.0.1",
+    version="0.0.2",
     author="Ko Gi Hun",
     author_email="rhrlgns96@gmail.com",
     description="Simple Image Classifier",

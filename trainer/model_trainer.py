@@ -69,14 +69,16 @@ class ModelTrainer:
         # Checking OS for TensorBoard compatibility
         if platform == "darwin":
             print('os: OSX detected..')
-            tb_log = 'logs/'
+            if not os.path.isdir('./logs/osx'):
+                os.mkdir('./logs/osx')
+            tb_log = 'logs/osx'
         elif platform == 'win32':
             print('os: Windows detected..')
             tb_log = "logs\\fit\\" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         tb_callback = TensorBoard(log_dir=tb_log,
-                                  histogram_freq=2,
+                                  histogram_freq=1,
                                   write_graph=True,
-                                  write_images=False)
+                                  write_images=True)
         tb_callback.set_model(self.model)
 
         if os.path.isfile(MODEL_WEIGHT_FILENAME):
